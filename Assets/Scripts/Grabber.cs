@@ -30,7 +30,8 @@ public class Grabber : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.GetClosestGrabbable(highlight: true);
+        var closestObject = this.GetClosestGrabbable(highlight: true);
+        //this.effectRadius = closestObject.transform.lossyScale.
     }
 
     void OnTriggerEnter(Collider other)

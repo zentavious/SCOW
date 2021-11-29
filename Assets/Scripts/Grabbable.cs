@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class Grabbable : MonoBehaviour
 {
-
-    public float effectRadius; // needs to be smaller than collider radius
     public float viscocity; // propotion of effectRadius to use a movement inside collider
 
     private Vector3 originalPosition;
     private Grabber controller;
     private bool isHighlighted;
     private bool isGrabbed;
+
+    private float scaleModifier;
     
 
     // Start is called before the first frame update
@@ -20,6 +20,8 @@ public class Grabbable : MonoBehaviour
     {
         this.isHighlighted = false;
         this.isGrabbed = false;
+
+        this.scaleModifier = Vector3.Distance(Vector3.zero, this.transform.lossyScale) / 2;
     }
 
     // Update is called once per frame
@@ -31,28 +33,27 @@ public class Grabbable : MonoBehaviour
             {
                 if (!isHighlighted)
                 {
-                    if (Vector3.Distance(this.originalPosition, this.controller.transform.position) <= effectRadius)
+                    if (Vector3.Distance(this.originalPosition, this.controller.transform.position) - this.scaleModifier <= this.controller.effectRadius + this.scaleModifier) // TODO: Fix jitter effect on boundaries
                     {
-                        Guid x = Guid.NewGuid();
-                        var distanceFromController = Vector3.Distance(this.originalPosition, this.controller.transform.position);
-                        var newDistance = distanceFromController / 2f - effectRadius / 2f; // TODO: needs to factor in size of selected object
+                        var distanceFromController = Vector3.Distance(this.originalPosition, this.controller.transform.position) - this.scaleModifier;
+                        var newDistance = distanceFromController / 2f - this.controller.effectRadius / 2f; // TODO: needs to factor in size of selected object, or this object?
                         var newPos = Vector3.MoveTowards(this.originalPosition, this.controller.transform.position, newDistance);
-                        newPos = Vector3.MoveTowards(this.transform.position, newPos, this.viscocity * this.effectRadius);
+                        newPos = Vector3.MoveTowards(this.transform.position, newPos, this.viscocity * this.controller.effectRadius);
                         this.transform.position = newPos;
                     }
                     else
                     {
-                        this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.effectRadius);
+                        this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.controller.effectRadius);
                     }
                 }
                 else
                 {
-                    this.transform.position = Vector3.MoveTowards(this.transform.position, this.controller.transform.position, this.viscocity * this.effectRadius);
+                    this.transform.position = Vector3.MoveTowards(this.transform.position, this.controller.transform.position, this.viscocity * this.controller.effectRadius);
                 }
             }
             else if (!controller?.IsEffectOn() ?? false)
             {
-                this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.effectRadius);
+                this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.controller.effectRadius);
             }
         }
         else
