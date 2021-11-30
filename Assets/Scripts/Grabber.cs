@@ -5,7 +5,12 @@ using UnityEngine.InputSystem;
 
 public class Grabber : MonoBehaviour
 {
-    public float effectRadius; // needs to be smaller than collider radius
+    /*
+     * defaultEffectRadius is currently tested for objects of scale .025 -> radius .15
+     */
+    public float defaultEffectRadius; // needs to be smaller than collider radius
+    public GameObject effectBubble;
+    public SphereCollider effectCollider;
     public InputActionProperty grabAction;
     public InputActionProperty selectAction;
 
@@ -20,9 +25,11 @@ public class Grabber : MonoBehaviour
         grabbedObject = null;
         effectOn = true;
 
+        this.effectBubble.transform.localScale = new Vector3(effectCollider.radius * 2, effectCollider.radius * 2, effectCollider.radius * 2);
+        effectCollider.radius = defaultEffectRadius;
+
         grabAction.action.performed += Grab;
         grabAction.action.canceled += Release;
-
 
         selectAction.action.performed += Select;
     }
@@ -31,7 +38,15 @@ public class Grabber : MonoBehaviour
     void Update()
     {
         var closestObject = this.GetClosestGrabbable(highlight: true);
-        //this.effectRadius = closestObject.transform.lossyScale.
+        if (closestObject)
+        {
+            effectCollider.radius = closestObject.transform.lossyScale.x + .125f;
+        }
+        else
+        {
+            effectCollider.radius = defaultEffectRadius;
+        }
+        this.effectBubble.transform.localScale = new Vector3(effectCollider.radius * 2, effectCollider.radius * 2, effectCollider.radius * 2);
     }
 
     void OnTriggerEnter(Collider other)
@@ -113,27 +128,27 @@ public class Grabber : MonoBehaviour
         {
             grabbable.Unhighlight();
             var distance = Vector3.Distance(grabbable.GetOriginalPosition(), this.gameObject.transform.position);
-            if (!closestGrabbable)
+            var scaleModifier = Vector3.Distance(Vector3.zero, grabbable.transform.lossyScale) / 2;
+            if (distance - scaleModifier <= this.defaultEffectRadius + scaleModifier)
             {
-                closestGrabbable = grabbable;
-                closestDistance = distance;
-            }
-            else if (closestDistance > distance)
-            {
-                closestDistance = distance;
-                closestGrabbable = grabbable;
+                if (!closestGrabbable)
+                {
+                    closestGrabbable = grabbable;
+                    closestDistance = distance;
+                }
+                else if (closestDistance > distance)
+                {
+                    closestDistance = distance;
+                    closestGrabbable = grabbable;
+                }
             }
         }
 
-        if (closestDistance <= this.effectRadius)
+        if (highlight)
         {
-            if (highlight)
-            {
-                closestGrabbable?.Highlight();
-            }
-            return closestGrabbable?.gameObject;
+            closestGrabbable?.Highlight();
         }
 
-        return null;
+        return closestGrabbable?.gameObject;
     }
 }
