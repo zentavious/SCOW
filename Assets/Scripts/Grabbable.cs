@@ -98,6 +98,20 @@ public class Grabbable : MonoBehaviour
         return this.originalPosition;
     }
 
+    public void MoveOrignalPosition(Vector3 posDelta, Quaternion newRotation)
+    {
+        this.originalPosition = this.originalPosition - posDelta;
+        this.transform.position = this.transform.position - posDelta;
+        Debug.Log($"Moved to {this.transform.position}");
+        //this.transform.rotation = newRotation;
+    }
+
+    public void SetOriginalPosition(Vector3 pos)
+    {
+        this.originalPosition = pos;
+        this.transform.position = pos;
+    }
+
     public void Grab(Transform parent)
     {
         this.isGrabbed = true;
