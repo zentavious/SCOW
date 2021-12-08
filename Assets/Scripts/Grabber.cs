@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,11 +9,15 @@ public class Grabber : MonoBehaviour
     /*
      * defaultEffectRadius is currently tested for objects of scale .025 -> radius .15
      */
-    public float defaultEffectRadius; // needs to be smaller than collider radius
+
+    public float viscocity; // propotion of effectRadius to use a movement inside collider (0,1]
+    public float defaultEffectRadius; 
     public GameObject effectBubble;
-    public SphereCollider effectCollider;
+    public SphereCollider effectCollider; // needs to be bigger than modified collider radius by 1
     public InputActionProperty grabAction;
     public InputActionProperty selectAction;
+
+    public float modifiendEffectRadius; // use this for all external radius functions
 
     private List<Grabbable> Grabbables = new List<Grabbable>();
     private GameObject grabbedObject;
@@ -25,8 +30,9 @@ public class Grabber : MonoBehaviour
         grabbedObject = null;
         effectOn = true;
 
-        this.effectBubble.transform.localScale = new Vector3(effectCollider.radius * 2, effectCollider.radius * 2, effectCollider.radius * 2);
-        effectCollider.radius = defaultEffectRadius;
+        modifiendEffectRadius = defaultEffectRadius;
+        effectCollider.radius = modifiendEffectRadius + 1;
+        this.effectBubble.transform.localScale = new Vector3(modifiendEffectRadius * 2, modifiendEffectRadius * 2, modifiendEffectRadius * 2);
 
         grabAction.action.performed += Grab;
         grabAction.action.canceled += Release;
@@ -40,13 +46,15 @@ public class Grabber : MonoBehaviour
         var closestObject = this.GetClosestGrabbable(highlight: true);
         if (closestObject)
         {
-            effectCollider.radius = closestObject.transform.lossyScale.x + .125f;
+            modifiendEffectRadius = Math.Max(closestObject.transform.lossyScale.x, Math.Max(closestObject.transform.lossyScale.y, closestObject.transform.lossyScale.z)) + defaultEffectRadius - 0.025f;
+            effectCollider.radius = modifiendEffectRadius + 1;
         }
         else
         {
-            effectCollider.radius = defaultEffectRadius;
+            modifiendEffectRadius = defaultEffectRadius;
+            effectCollider.radius = modifiendEffectRadius + 1;
         }
-        this.effectBubble.transform.localScale = new Vector3(effectCollider.radius * 2, effectCollider.radius * 2, effectCollider.radius * 2);
+        this.effectBubble.transform.localScale = new Vector3(modifiendEffectRadius * 2, modifiendEffectRadius * 2, modifiendEffectRadius * 2);
     }
 
     void OnTriggerEnter(Collider other)

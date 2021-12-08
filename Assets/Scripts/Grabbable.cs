@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Grabbable : MonoBehaviour
 {
-    public float viscocity; // propotion of effectRadius to use a movement inside collider
 
     private Vector3 originalPosition;
     private Grabber controller;
@@ -21,7 +20,8 @@ public class Grabbable : MonoBehaviour
         this.isHighlighted = false;
         this.isGrabbed = false;
 
-        this.scaleModifier = Vector3.Distance(Vector3.zero, this.transform.lossyScale) / 2;
+        this.scaleModifier = Vector3.Distance(Vector3.zero, this.transform.lossyScale) / 2; 
+        //this.scaleModifier = this.transform.lossyScale.x / 2;
     }
 
     // Update is called once per frame
@@ -33,27 +33,33 @@ public class Grabbable : MonoBehaviour
             {
                 if (!isHighlighted)
                 {
-                    if (Vector3.Distance(this.originalPosition, this.controller.transform.position) - this.scaleModifier <= this.controller.effectCollider.radius + this.scaleModifier) // TODO: Fix jitter effect on boundaries
+                    var distanceFromController = Vector3.Distance(this.originalPosition, this.controller.transform.position);
+
+                    var normalizedScaleModifier = (this.controller.modifiendEffectRadius - distanceFromController) / this.controller.modifiendEffectRadius * scaleModifier; // Without this there is jitter on the boundaries, we mornalize the scale modifier based on the interval 0 - modifiedEffectRadius
+
+                    distanceFromController = distanceFromController - normalizedScaleModifier;
+
+                    if (distanceFromController <= this.controller.modifiendEffectRadius + normalizedScaleModifier) 
                     {
-                        var distanceFromController = Vector3.Distance(this.originalPosition, this.controller.transform.position) - this.scaleModifier;
-                        var newDistance = distanceFromController / 2f - this.controller.effectCollider.radius / 2f; // TODO: needs to factor in size of selected object, or this object?
+                        var newDistance = distanceFromController / 2f - this.controller.modifiendEffectRadius / 2f; // TODO: all distance changes shoul duse this.viscocity
                         var newPos = Vector3.MoveTowards(this.originalPosition, this.controller.transform.position, newDistance);
-                        newPos = Vector3.MoveTowards(this.transform.position, newPos, this.viscocity * this.controller.effectCollider.radius);
-                        this.transform.position = newPos;
+                        newPos = Vector3.MoveTowards(this.transform.position, newPos, this.controller.viscocity * this.controller.defaultEffectRadius);
+                        //this.transform.position = newPos;
+                        this.transform.position = Vector3.MoveTowards(this.transform.position, newPos, this.controller.viscocity * this.controller.defaultEffectRadius);
                     }
                     else
                     {
-                        this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.controller.effectCollider.radius);
+                        this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.controller.viscocity * this.controller.defaultEffectRadius);
                     }
                 }
                 else
                 {
-                    this.transform.position = Vector3.MoveTowards(this.transform.position, this.controller.transform.position, this.viscocity * this.controller.effectCollider.radius);
+                    this.transform.position = Vector3.MoveTowards(this.transform.position, this.controller.transform.position, this.controller.viscocity * this.controller.defaultEffectRadius);
                 }
             }
             else if (!controller?.IsEffectOn() ?? false)
             {
-                this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.viscocity * this.controller.effectCollider.radius);
+                this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.controller.viscocity * this.controller.defaultEffectRadius);
             }
         }
         else
