@@ -98,18 +98,22 @@ public class Grabbable : MonoBehaviour
         return this.originalPosition;
     }
 
-    public void MoveOrignalPosition(Vector3 posDelta, Quaternion newRotation)
+    public void MoveOriginalPosition(Vector3 posDelta, Quaternion newRotation)
     {
         this.originalPosition = this.originalPosition - posDelta;
         this.transform.position = this.transform.position - posDelta;
-        Debug.Log($"Moved to {this.transform.position}");
-        //this.transform.rotation = newRotation;
+        this.transform.rotation = newRotation;
     }
 
-    public void SetOriginalPosition(Vector3 pos)
+    public void SetOriginalPosition(Vector3 pos, Quaternion newRotation)
     {
+        var posDelta = this.originalPosition - pos;
         this.originalPosition = pos;
-        this.transform.position = pos;
+        if (!this.isHighlighted) // position will already be set if we are highlighted so we don't need to worry about this
+        {
+            this.transform.position = this.transform.position - posDelta;
+        }
+        this.transform.rotation = newRotation;
     }
 
     public void Grab(Transform parent)
@@ -126,6 +130,11 @@ public class Grabbable : MonoBehaviour
         this.transform.parent = null;
 
         this.isGrabbed = false;
+    }
+
+    public bool IsGrabbed()
+    {
+        return this.isGrabbed;
     }
 
     public bool Select()
