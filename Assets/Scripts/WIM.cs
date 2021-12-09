@@ -15,18 +15,7 @@ public class WIM : MonoBehaviour
         this.miniObjects = new List<GameObject>();
 
         this.CastObjectsToWIM(parentWIMObject); // cheat until we actually start casting
-        /*
-        int i = 0;
-        foreach (Transform child in this.parentWIMObject.transform) // TODO: we cheat here by getting the relative position of every object here at the start. This will need to be done later on cast
-        {
-            this.miniObjects.Add(child.gameObject);
-            var gameObject = new GameObject($"Object_{i}");
-            gameObject.transform.position = child.gameObject.transform.position;
-            Debug.Log($"Created game object {gameObject.name}");
-            gameObject.transform.parent = this.transform;
-            i++;
-        }
-        Debug.Log($"There are {i} children");*/
+
     }
 
     // Update is called once per frame
@@ -62,7 +51,7 @@ public class WIM : MonoBehaviour
     {
         int i = 0;
         this.parentWIMObject = new GameObject("Parent Container");
-        this.parentWIMObject.transform.position = this.transform.position;
+        this.parentWIMObject.transform.position = this.transform.position; // check where this is
         foreach (Transform child in parentWIMObject.transform)
         {
             var clone = GameObject.Instantiate(child.gameObject);
