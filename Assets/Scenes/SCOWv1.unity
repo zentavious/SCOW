@@ -11796,6 +11796,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
+  worldInMiniature: {fileID: 0}
   modifiendEffectRadius: 0
 --- !u!135 &1333240240
 SphereCollider:
@@ -14299,6 +14300,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
+  worldInMiniature: {fileID: 0}
   modifiendEffectRadius: 0
 --- !u!1 &1911925681
 GameObject:
@@ -14404,6 +14406,7 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
+  worldInMiniature: {fileID: 312890673}
   modifiendEffectRadius: 0
 --- !u!135 &1923477935
 SphereCollider:
