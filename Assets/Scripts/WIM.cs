@@ -7,11 +7,12 @@ public class WIM : MonoBehaviour
     public GameObject parentWIMObject;
     public GameObject projectionSpace;
     private List<GameObject> miniObjects;
+    private float smallestScaleModifier;
     private Vector3 lastPos;
     // Start is called before the first frame update
     void Start()
     {
-        // this.parentWIMObject.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + .05f, this.transform.position.z);
+        this.smallestScaleModifier = float.MaxValue;
         this.lastPos = this.transform.position;
         this.miniObjects = new List<GameObject>();
 
@@ -50,13 +51,19 @@ public class WIM : MonoBehaviour
 
     public void CastObjectsToWIM(GameObject parentWIMObject)
     {
+        this.smallestScaleModifier = float.MaxValue; // reset on every new cast
+
         int i = 0;
         this.parentWIMObject = new GameObject("Parent Container");
 
         this.parentWIMObject.transform.position = this.projectionSpace.transform.position;
         foreach (Transform child in parentWIMObject.transform)
         {
-
+            var scaleModifier = Vector3.Distance(Vector3.zero, child.transform.lossyScale) / 2;
+            if (scaleModifier <= this.smallestScaleModifier)
+            {
+                this.smallestScaleModifier = scaleModifier;
+            }
             var clone = GameObject.Instantiate(child.gameObject);
             clone.transform.parent = this.parentWIMObject.transform;
             clone.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
@@ -70,6 +77,11 @@ public class WIM : MonoBehaviour
 
             i++;
         }
+    }
+
+    public float GetSmallestScaleModifier()
+    {
+        return this.smallestScaleModifier;
     }
 
 }

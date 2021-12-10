@@ -41,7 +41,7 @@ public class Grabbable : MonoBehaviour
 
                     if (distanceFromController <= this.controller.modifiendEffectRadius + normalizedScaleModifier) 
                     {
-                        var newDistance = distanceFromController / 2f - this.controller.modifiendEffectRadius / 2f; // TODO: all distance changes shoul duse this.viscocity
+                        var newDistance = distanceFromController / 2f - (this.controller.modifiendEffectRadius + normalizedScaleModifier) / 2f; // TODO: all distance changes shoul duse this.viscocity
                         var newPos = Vector3.MoveTowards(this.originalPosition, this.controller.transform.position, newDistance);
                         newPos = Vector3.MoveTowards(this.transform.position, newPos, this.controller.viscocity * this.controller.defaultEffectRadius);
                         //this.transform.position = newPos;

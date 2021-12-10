@@ -16,6 +16,7 @@ public class Grabber : MonoBehaviour
     public SphereCollider effectCollider; // needs to be bigger than modified collider radius by 1
     public InputActionProperty grabAction;
     public InputActionProperty selectAction;
+    public WIM worldInMiniature;
 
     public float modifiendEffectRadius; // use this for all external radius functions
 
@@ -136,8 +137,7 @@ public class Grabber : MonoBehaviour
         {
             grabbable.Unhighlight();
             var distance = Vector3.Distance(grabbable.GetOriginalPosition(), this.gameObject.transform.position);
-            var scaleModifier = Vector3.Distance(Vector3.zero, grabbable.transform.lossyScale) / 2;
-            if (distance - scaleModifier <= this.defaultEffectRadius + scaleModifier)
+            if (distance - this.worldInMiniature.GetSmallestScaleModifier() <= this.modifiendEffectRadius + this.worldInMiniature.GetSmallestScaleModifier()) //
             {
                 if (!closestGrabbable)
                 {
