@@ -5,6 +5,7 @@ using UnityEngine;
 public class WIM : MonoBehaviour
 {
     public GameObject parentWIMObject;
+    public GameObject projectionSpace;
     private List<GameObject> miniObjects;
     private Vector3 lastPos;
     // Start is called before the first frame update
@@ -22,7 +23,7 @@ public class WIM : MonoBehaviour
     void Update()
     {
         var deltaPos = this.lastPos - this.transform.position;
-        foreach (Transform child in this.transform)
+        foreach (Transform child in this.projectionSpace.transform)
         {
             var name = child.name.Split('_');
             if (name[0].Equals("Object"))
@@ -52,7 +53,7 @@ public class WIM : MonoBehaviour
         int i = 0;
         this.parentWIMObject = new GameObject("Parent Container");
 
-        this.parentWIMObject.transform.position = this.transform.position;
+        this.parentWIMObject.transform.position = this.projectionSpace.transform.position;
         foreach (Transform child in parentWIMObject.transform)
         {
 
@@ -63,7 +64,7 @@ public class WIM : MonoBehaviour
             this.miniObjects.Add(clone);
 
             var gameObject = new GameObject($"Object_{i}");
-            gameObject.transform.parent = this.transform;
+            gameObject.transform.parent = this.projectionSpace.transform;
             gameObject.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
             Debug.Log(gameObject.transform.position);
 
