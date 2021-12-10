@@ -22,7 +22,7 @@ public class Grabber : MonoBehaviour
     private List<Grabbable> Grabbables = new List<Grabbable>();
     private GameObject grabbedObject;
     private GameObject selectedObject;
-    private bool effectOn;
+    private bool effectOn; // this is the Oil in Water effect. WHen off ray - sphere cast is "on"
 
     // Start is called before the first frame update
     void Start()

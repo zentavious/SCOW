@@ -51,19 +51,21 @@ public class WIM : MonoBehaviour
     {
         int i = 0;
         this.parentWIMObject = new GameObject("Parent Container");
-        this.parentWIMObject.transform.position = this.transform.position; // check where this is
+
+        this.parentWIMObject.transform.position = this.transform.position;
         foreach (Transform child in parentWIMObject.transform)
         {
+
             var clone = GameObject.Instantiate(child.gameObject);
             clone.transform.parent = this.parentWIMObject.transform;
-            Debug.Log(child.transform.localPosition);
-            clone.transform.localPosition = child.transform.localPosition;
+            clone.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
 
             this.miniObjects.Add(clone);
 
             var gameObject = new GameObject($"Object_{i}");
-            gameObject.transform.position = child.gameObject.transform.position;
             gameObject.transform.parent = this.transform;
+            gameObject.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
+            Debug.Log(gameObject.transform.position);
 
             i++;
         }
