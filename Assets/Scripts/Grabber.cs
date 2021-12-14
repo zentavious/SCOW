@@ -80,12 +80,14 @@ public class Grabber : MonoBehaviour
     {
         if (this.grabbedObject == null)
         {
-            this.grabbedObject = GetClosestGrabbable();
-            var grabbable = this.grabbedObject.GetComponent<Grabbable>();
+            var grabbedObject = GetClosestGrabbable();
+            var grabbable = grabbedObject.GetComponent<Grabbable>();
+
+            grabbable = this.worldInMiniature.UnCastWIM(grabbable);// switch to original grabbabale
+            this.grabbedObject = grabbable.gameObject;
 
             grabbable.Grab(parent: this.transform);
             this.effectOn = false;
-            worldInMiniature.UnCastWIM(grabbable);
         }
     }
 
@@ -106,13 +108,18 @@ public class Grabber : MonoBehaviour
     {
         if (this.selectedObject == null)
         {
-            this.selectedObject = GetClosestGrabbable();
+            var selectedObject = GetClosestGrabbable();
+            if (selectedObject)
+            {
+                var grabbable = selectedObject.GetComponent<Grabbable>(); // Will null ref is select is pressed without an object
 
-            var grabbable = this.selectedObject.GetComponent<Grabbable>(); // Will null ref is select is pressed without an object
-            
-            grabbable.Select();
-            worldInMiniature.UnCastWIM(grabbable);
-            this.effectOn = false;
+                grabbable = this.worldInMiniature.UnCastWIM(grabbable); // switch to original grabbabale
+                this.selectedObject = grabbable.gameObject;
+
+                grabbable.Select();
+                worldInMiniature.UnCastWIM(grabbable);
+                this.effectOn = false;
+            }
         }
         else
         {
@@ -159,6 +166,13 @@ public class Grabber : MonoBehaviour
             closestGrabbable?.Highlight();
         }
 
-        return closestGrabbable?.gameObject;
+        if (closestGrabbable)
+        {
+            return closestGrabbable.gameObject;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

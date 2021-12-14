@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ public class WIM : MonoBehaviour
 {
     public GameObject parentWIMObject;
     public GameObject projectionSpace;
+    public Grabber controller;
     private List<WIMMapping> mappings;
     private float smallestScaleModifier;
     private Vector3 lastPos;
@@ -82,31 +84,35 @@ public class WIM : MonoBehaviour
             var gameObject = new GameObject($"Object_{i}");
             gameObject.transform.parent = this.projectionSpace.transform;
             gameObject.transform.localPosition = new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z);
-            Debug.Log(gameObject.transform.position);
 
             i++;
         }
     }
 
-    public GameObject UnCastWIM(Grabbable targetClone)
+    public Grabbable UnCastWIM(Grabbable targetClone)
     {
         var targetMapping = this.mappings.FirstOrDefault<WIMMapping>(_ => _.clone == targetClone.gameObject);
+        Grabbable originalGrabbable = null;
         if (targetMapping != null)
         {
-
-            if (targetClone.IsGrabbed())
-            {
-                targetClone.Release();
-            }
-            else if (targetClone.IsS)
+            originalGrabbable = targetMapping.original.GetComponent<Grabbable>();
             Debug.Log("Found target clone");
+
+            foreach (Transform child in this.projectionSpace.transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
+            GameObject.Destroy(this.parentWIMObject);
+            this.parentWIMObject = null;
         }
         else
         {
             Debug.Log("Couldn't find target clone");
+            throw new NullReferenceException();
         }
-        //this.mappings = new List<WIMMapping>();
-        return targetMapping.original;
+        this.mappings = new List<WIMMapping>();
+        return originalGrabbable;
     }
 
     public float GetSmallestScaleModifier()
