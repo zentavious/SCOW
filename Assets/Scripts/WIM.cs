@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WIM : MonoBehaviour
@@ -85,6 +86,27 @@ public class WIM : MonoBehaviour
 
             i++;
         }
+    }
+
+    public GameObject UnCastWIM(Grabbable targetClone)
+    {
+        var targetMapping = this.mappings.FirstOrDefault<WIMMapping>(_ => _.clone == targetClone.gameObject);
+        if (targetMapping != null)
+        {
+
+            if (targetClone.IsGrabbed())
+            {
+                targetClone.Release();
+            }
+            else if (targetClone.IsS)
+            Debug.Log("Found target clone");
+        }
+        else
+        {
+            Debug.Log("Couldn't find target clone");
+        }
+        //this.mappings = new List<WIMMapping>();
+        return targetMapping.original;
     }
 
     public float GetSmallestScaleModifier()

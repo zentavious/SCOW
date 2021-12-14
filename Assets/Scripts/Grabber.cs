@@ -85,6 +85,7 @@ public class Grabber : MonoBehaviour
 
             grabbable.Grab(parent: this.transform);
             this.effectOn = false;
+            worldInMiniature.UnCastWIM(grabbable);
         }
     }
 
@@ -108,8 +109,9 @@ public class Grabber : MonoBehaviour
             this.selectedObject = GetClosestGrabbable();
 
             var grabbable = this.selectedObject.GetComponent<Grabbable>(); // Will null ref is select is pressed without an object
+            
             grabbable.Select();
-
+            worldInMiniature.UnCastWIM(grabbable);
             this.effectOn = false;
         }
         else
