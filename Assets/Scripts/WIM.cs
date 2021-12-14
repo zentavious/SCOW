@@ -6,7 +6,7 @@ public class WIM : MonoBehaviour
 {
     public GameObject parentWIMObject;
     public GameObject projectionSpace;
-    private List<GameObject> miniObjects;
+    private List<WIMMapping> mappings;
     private float smallestScaleModifier;
     private Vector3 lastPos;
     // Start is called before the first frame update
@@ -14,7 +14,7 @@ public class WIM : MonoBehaviour
     {
         this.smallestScaleModifier = float.MaxValue;
         this.lastPos = this.transform.position;
-        this.miniObjects = new List<GameObject>();
+        this.mappings = new List<WIMMapping>();
 
         this.CastObjectsToWIM(parentWIMObject); // cheat until we actually start casting
 
@@ -30,18 +30,24 @@ public class WIM : MonoBehaviour
             if (name[0].Equals("Object"))
             {
                 var index = int.Parse(child.name.Split('_')[1]);
-                var grabbable = miniObjects[index].GetComponent<Grabbable>();
+                var grabbable = this.mappings[index].clone.GetComponent<Grabbable>();
+                var originalGrabbable = this.mappings[index].original.GetComponent<Grabbable>();
+                originalGrabbable.Deselect(); // force deselect, we will select again if this is highlighted
                 if (grabbable)
                 {
                     if (!grabbable.IsGrabbed())
                     {
                         grabbable.SetOriginalPosition(child.transform.position, child.transform.rotation);
                     }
+                    if (grabbable.IsHighlighted())
+                    {
+                        originalGrabbable.Select();
+                    }
                 }
-                else
+                else // probablhy not necessary if only grabbable objects are projected
                 {
-                    miniObjects[index].transform.position = child.transform.position;
-                    miniObjects[index].transform.rotation = child.transform.rotation;
+                    this.mappings[index].clone.transform.position = child.transform.position;
+                    this.mappings[index].clone.transform.rotation = child.transform.rotation;
                 }
             }
         }
@@ -51,6 +57,7 @@ public class WIM : MonoBehaviour
 
     public void CastObjectsToWIM(GameObject parentWIMObject)
     {
+        this.mappings = new List<WIMMapping>(); // Force clear any existing mappings
         this.smallestScaleModifier = float.MaxValue; // reset on every new cast
 
         int i = 0;
@@ -64,15 +71,16 @@ public class WIM : MonoBehaviour
             {
                 this.smallestScaleModifier = scaleModifier;
             }
+            /*
             var clone = GameObject.Instantiate(child.gameObject);
             clone.transform.parent = this.parentWIMObject.transform;
-            clone.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
+            clone.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);*/
 
-            this.miniObjects.Add(clone);
+            this.mappings.Add(new WIMMapping(child.gameObject, this.parentWIMObject));
 
             var gameObject = new GameObject($"Object_{i}");
             gameObject.transform.parent = this.projectionSpace.transform;
-            gameObject.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);
+            gameObject.transform.localPosition = new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z);
             Debug.Log(gameObject.transform.position);
 
             i++;
@@ -83,5 +91,18 @@ public class WIM : MonoBehaviour
     {
         return this.smallestScaleModifier;
     }
+    
+    private class WIMMapping
+    {
+        public GameObject original;
+        public GameObject clone;
 
+        public WIMMapping(GameObject original, GameObject parentWIMObject)
+        {
+            this.original = original;
+            this.clone = GameObject.Instantiate(original);
+            clone.transform.parent = parentWIMObject.transform;
+            clone.transform.localPosition = new Vector3(original.transform.localPosition.x, original.transform.localPosition.y, original.transform.localPosition.z);
+        }
+    }
 }

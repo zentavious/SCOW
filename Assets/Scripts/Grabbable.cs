@@ -143,10 +143,15 @@ public class Grabbable : MonoBehaviour
         return this.isGrabbed;
     }
 
-    public bool Select()
+    public void Select()
     {
         var outline = this.GetComponent<Outline>();
-        outline.enabled = !outline.enabled;
-        return outline.enabled;
+        outline.enabled = true;
+    }
+
+    public void Deselect()
+    {
+        var outline = this.GetComponent<Outline>();
+        outline.enabled = false;
     }
 }

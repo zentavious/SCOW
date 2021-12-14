@@ -116,7 +116,7 @@ public class Grabber : MonoBehaviour
         {
             var grabbable = this.selectedObject.GetComponent<Grabbable>();
             
-            grabbable.Select();
+            grabbable.Deselect();
 
             this.selectedObject = null;
             this.effectOn = this.grabbedObject == null; // TODO: effect should only be on after sphere cast, work around bc cast is not implimented
