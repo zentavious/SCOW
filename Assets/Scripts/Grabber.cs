@@ -9,7 +9,9 @@ public class Grabber : MonoBehaviour
     /*
      * defaultEffectRadius is currently tested for objects of scale .025 -> radius .15
      */
-
+    public LineRenderer laserPointer;
+    public GameObject sphereCast;
+    public LayerMask defaultLayer;
     public float viscocity; // propotion of effectRadius to use a movement inside collider (0,1]
     public float defaultEffectRadius; 
     public GameObject effectBubble;
@@ -28,22 +30,44 @@ public class Grabber : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        grabbedObject = null;
-        effectOn = true;
+        this.laserPointer.enabled = true;
 
-        modifiendEffectRadius = defaultEffectRadius;
-        effectCollider.radius = modifiendEffectRadius + 1;
-        this.effectBubble.transform.localScale = new Vector3(modifiendEffectRadius * 2, modifiendEffectRadius * 2, modifiendEffectRadius * 2);
+        this.grabbedObject = null;
+        this.effectOn = true;
 
-        grabAction.action.performed += Grab;
-        grabAction.action.canceled += Release;
+        this.modifiendEffectRadius = this.defaultEffectRadius;
+        this.effectCollider.radius = modifiendEffectRadius + 1;
+        this.effectBubble.transform.localScale = new Vector3(this.modifiendEffectRadius * 2, this.modifiendEffectRadius * 2, this.modifiendEffectRadius * 2);
 
-        selectAction.action.performed += Select;
+        this.grabAction.action.performed += Grab;
+        this.grabAction.action.canceled += Release;
+
+        this.selectAction.action.performed += Select;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (laserPointer.enabled)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(this.transform.position, this.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, this.defaultLayer))
+            {
+                this.laserPointer.SetPosition(1, new Vector3(0, 0, hit.distance));
+                this.sphereCast.transform.position = hit.point;
+                this.sphereCast.GetComponent<Renderer>().enabled = true;
+                if (hit.collider.GetComponent<Grabbable>())
+                {
+                    //Debug.Log("hit");
+                }
+            }
+            else
+            {
+                this.sphereCast.GetComponent<Renderer>().enabled = false;
+                laserPointer.SetPosition(1, new Vector3(0, 0, 100));
+            }
+        }
+
         var closestObject = this.GetClosestGrabbable(highlight: true);
         if (closestObject)
         {

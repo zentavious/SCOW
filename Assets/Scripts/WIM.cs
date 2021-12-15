@@ -12,6 +12,7 @@ public class WIM : MonoBehaviour
     private List<WIMMapping> mappings;
     private float smallestScaleModifier;
     private Vector3 lastPos;
+    private bool inUpdateLoop;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,7 @@ public class WIM : MonoBehaviour
         this.lastPos = this.transform.position;
         this.mappings = new List<WIMMapping>();
 
-        this.CastObjectsToWIM(parentWIMObject); // cheat until we actually start casting
+        //this.CastObjectsToWIM(parentWIMObject); // cheat until we actually start casting
 
     }
 
@@ -111,6 +112,10 @@ public class WIM : MonoBehaviour
             Debug.Log("Couldn't find target clone");
             throw new NullReferenceException();
         }
+        foreach (WIMMapping mapping in this.mappings)
+        {
+            mapping.original.GetComponent<Grabbable>()?.Deselect();
+        }
         this.mappings = new List<WIMMapping>();
         return originalGrabbable;
     }
@@ -129,6 +134,9 @@ public class WIM : MonoBehaviour
         {
             this.original = original;
             this.clone = GameObject.Instantiate(original);
+            var rigidBody = clone.GetComponent<Rigidbody>();
+            rigidBody.isKinematic = true;
+            rigidBody.useGravity = false;
             clone.transform.parent = parentWIMObject.transform;
             clone.transform.localPosition = new Vector3(original.transform.localPosition.x, original.transform.localPosition.y, original.transform.localPosition.z);
         }
