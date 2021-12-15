@@ -7,6 +7,7 @@ public class SphereCast : MonoBehaviour
 {
     public InputActionProperty selectAction;
     public WIM worldsInMiniature;
+    public Grabber controller;
 
     private List<GameObject> objects;
 
@@ -54,7 +55,7 @@ public class SphereCast : MonoBehaviour
 
             var castContainer = new GameObject("Cast Container");
             castContainer.transform.position = averagePos;
-            castContainer.transform.rotation = Quaternion.Euler(Vector3.zero);
+            castContainer.transform.rotation = Quaternion.Euler(0, this.controller.transform.rotation.eulerAngles.y, 0);
             foreach (var gameObject in this.objects)
             {
                 gameObject.transform.parent = castContainer.transform;

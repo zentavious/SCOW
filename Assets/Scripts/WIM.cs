@@ -73,6 +73,7 @@ public class WIM : MonoBehaviour
         this.parentWIMObject = new GameObject("Parent Container");
 
         this.parentWIMObject.transform.position = this.projectionSpace.transform.position;
+        this.parentWIMObject.transform.rotation = parentWIMObject.transform.rotation;
         foreach (Transform child in parentWIMObject.transform)
         {
             var scaleModifier = Vector3.Distance(Vector3.zero, child.transform.lossyScale) / 2;
@@ -90,7 +91,7 @@ public class WIM : MonoBehaviour
             var gameObject = new GameObject($"Object_{i}");
             gameObject.transform.parent = this.projectionSpace.transform;
             gameObject.transform.localPosition = new Vector3(child.localPosition.x*.5f, child.localPosition.y * .5f, child.localPosition.z * .5f);
-            gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
+            gameObject.transform.localRotation = child.transform.localRotation;
 
             i++;
         }
