@@ -8,7 +8,9 @@ public class WIM : MonoBehaviour
 {
     public GameObject parentWIMObject;
     public GameObject projectionSpace;
+    public LineRenderer laserPointer;
     public Grabber controller;
+    public Material seeThrough;
     private List<WIMMapping> mappings;
     private float smallestScaleModifier;
     private Vector3 lastPos;
@@ -61,6 +63,7 @@ public class WIM : MonoBehaviour
 
     public void CastObjectsToWIM(GameObject parentWIMObject)
     {
+        this.laserPointer.enabled = false;
         this.mappings = new List<WIMMapping>(); // Force clear any existing mappings
         this.smallestScaleModifier = float.MaxValue; // reset on every new cast
 
@@ -80,15 +83,16 @@ public class WIM : MonoBehaviour
             clone.transform.parent = this.parentWIMObject.transform;
             clone.transform.localPosition = new Vector3(child.transform.localPosition.x, child.transform.localPosition.y, child.transform.localPosition.z);*/
 
-            this.mappings.Add(new WIMMapping(child.gameObject, this.parentWIMObject));
+            this.mappings.Add(new WIMMapping(child.gameObject, this.parentWIMObject, this.seeThrough));
 
             var gameObject = new GameObject($"Object_{i}");
             gameObject.transform.parent = this.projectionSpace.transform;
-            gameObject.transform.localPosition = new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z);
+            gameObject.transform.localPosition = new Vector3(child.localPosition.x*.5f, child.localPosition.y * .5f, child.localPosition.z * .5f);
             gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
 
             i++;
         }
+        this.controller.SetEffectOn(true);
     }
 
     public Grabbable UnCastWIM(Grabbable targetClone)
@@ -115,6 +119,7 @@ public class WIM : MonoBehaviour
         }
         foreach (WIMMapping mapping in this.mappings)
         {
+            mapping.original.GetComponent<MeshRenderer>().material = mapping.originalMaterial;
             mapping.original.GetComponent<Grabbable>()?.Deselect();
         }
         this.mappings = new List<WIMMapping>();
@@ -130,8 +135,9 @@ public class WIM : MonoBehaviour
     {
         public GameObject original;
         public GameObject clone;
+        public Material originalMaterial;
 
-        public WIMMapping(GameObject original, GameObject parentWIMObject)
+        public WIMMapping(GameObject original, GameObject parentWIMObject, Material seeThrough)
         {
             this.original = original;
             this.clone = GameObject.Instantiate(original);
@@ -139,7 +145,11 @@ public class WIM : MonoBehaviour
             rigidBody.isKinematic = true;
             rigidBody.useGravity = false;
             clone.transform.parent = parentWIMObject.transform;
-            clone.transform.localPosition = new Vector3(original.transform.localPosition.x, original.transform.localPosition.y, original.transform.localPosition.z);
+            clone.transform.localScale = clone.transform.localScale * .5f;
+            clone.transform.localPosition = new Vector3(original.transform.localPosition.x * .5f, original.transform.localPosition.y * .5f, original.transform.localPosition.z * .5f);
+            MeshRenderer renderer = this.original.GetComponent<MeshRenderer>();
+            this.originalMaterial = renderer.material;
+            renderer.material = seeThrough;
         }
     }
 }

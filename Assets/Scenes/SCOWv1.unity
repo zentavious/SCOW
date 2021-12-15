@@ -1747,6 +1747,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentWIMObject: {fileID: 0}
   projectionSpace: {fileID: 2137505424}
+  laserPointer: {fileID: 1923477936}
   controller: {fileID: 0}
 --- !u!1 &332328505
 GameObject:
@@ -12107,6 +12108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentWIMObject: {fileID: 2034364040}
   projectionSpace: {fileID: 0}
+  laserPointer: {fileID: 0}
   controller: {fileID: 0}
 --- !u!1001 &1384907280
 PrefabInstance:
@@ -12185,6 +12187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentWIMObject: {fileID: 2034364040}
   projectionSpace: {fileID: 0}
+  laserPointer: {fileID: 0}
   controller: {fileID: 0}
 --- !u!1001 &1389305480
 PrefabInstance:

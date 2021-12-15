@@ -57,10 +57,6 @@ public class Grabbable : MonoBehaviour
                     this.transform.position = Vector3.MoveTowards(this.transform.position, this.controller.transform.position, this.controller.viscocity * this.controller.defaultEffectRadius);
                 }
             }
-            else if (!controller?.IsEffectOn() ?? false)
-            {
-                this.transform.position = Vector3.MoveTowards(this.transform.position, this.originalPosition, this.controller.viscocity * this.controller.defaultEffectRadius);
-            }
             else
             {
                 this.originalPosition = this.transform.position;

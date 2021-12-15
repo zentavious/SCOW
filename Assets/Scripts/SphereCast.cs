@@ -43,10 +43,9 @@ public class SphereCast : MonoBehaviour
 
     public void Cast(InputAction.CallbackContext context)
     {
-        if (this.gameObject.GetComponent<SphereCollider>().enabled)
+        if (this.gameObject.GetComponent<Renderer>().enabled && this.objects.Count > 0)
         {
-            this.gameObject.GetComponent<SphereCollider>().enabled = false;
-            this.gameObject.GetComponent<Renderer>().enabled = true;
+            this.gameObject.GetComponent<Renderer>().enabled = false;
             Vector3 averagePos = Vector3.zero;
             foreach (var gameObject in this.objects)
             {

@@ -33,7 +33,7 @@ public class Grabber : MonoBehaviour
         this.laserPointer.enabled = true;
 
         this.grabbedObject = null;
-        this.effectOn = true;
+        this.effectOn = false;
 
         this.modifiendEffectRadius = this.defaultEffectRadius;
         this.effectCollider.radius = modifiendEffectRadius + 1;
@@ -68,18 +68,21 @@ public class Grabber : MonoBehaviour
             }
         }
 
-        var closestObject = this.GetClosestGrabbable(highlight: true);
-        if (closestObject)
+        if (this.effectOn)
         {
-            modifiendEffectRadius = Math.Max(closestObject.transform.lossyScale.x, Math.Max(closestObject.transform.lossyScale.y, closestObject.transform.lossyScale.z)) + defaultEffectRadius - 0.025f;
-            effectCollider.radius = modifiendEffectRadius + 1;
+            var closestObject = this.GetClosestGrabbable(highlight: true);
+            if (closestObject)
+            {
+                modifiendEffectRadius = Math.Max(closestObject.transform.lossyScale.x, Math.Max(closestObject.transform.lossyScale.y, closestObject.transform.lossyScale.z)) + defaultEffectRadius - 0.025f;
+                effectCollider.radius = modifiendEffectRadius + 1;
+            }
+            else
+            {
+                modifiendEffectRadius = defaultEffectRadius;
+                effectCollider.radius = modifiendEffectRadius + 1;
+            }
+            this.effectBubble.transform.localScale = new Vector3(modifiendEffectRadius * 2, modifiendEffectRadius * 2, modifiendEffectRadius * 2);
         }
-        else
-        {
-            modifiendEffectRadius = defaultEffectRadius;
-            effectCollider.radius = modifiendEffectRadius + 1;
-        }
-        this.effectBubble.transform.localScale = new Vector3(modifiendEffectRadius * 2, modifiendEffectRadius * 2, modifiendEffectRadius * 2);
     }
 
     void OnTriggerEnter(Collider other)
@@ -108,6 +111,7 @@ public class Grabber : MonoBehaviour
             var grabbable = grabbedObject.GetComponent<Grabbable>();
 
             grabbable = this.worldInMiniature.UnCastWIM(grabbable);// switch to original grabbabale
+            grabbable.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             this.grabbedObject = grabbable.gameObject;
 
             grabbable.Grab(parent: this.transform);
@@ -122,8 +126,10 @@ public class Grabber : MonoBehaviour
             var grabbable = this.grabbedObject.GetComponent<Grabbable>();
 
             grabbable.Release();
+            grabbable.gameObject.GetComponent<Rigidbody>().isKinematic = false;
             this.grabbedObject = null;
-            this.effectOn = this.selectedObject == null; // TODO: effect should only be on after sphere cast, work around bc cast is not implimented
+
+            this.laserPointer.enabled = true;
         }
     }
 
@@ -152,13 +158,19 @@ public class Grabber : MonoBehaviour
             grabbable.Deselect();
 
             this.selectedObject = null;
-            this.effectOn = this.grabbedObject == null; // TODO: effect should only be on after sphere cast, work around bc cast is not implimented
+
+            this.laserPointer.enabled = true;
         }
     }
 
     public bool IsEffectOn()
     {
         return this.effectOn;
+    }
+
+    public void SetEffectOn(bool on)
+    {
+        this.effectOn = on;
     }
 
     private GameObject GetClosestGrabbable(bool highlight = false)
