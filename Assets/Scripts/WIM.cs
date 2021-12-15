@@ -85,6 +85,7 @@ public class WIM : MonoBehaviour
             var gameObject = new GameObject($"Object_{i}");
             gameObject.transform.parent = this.projectionSpace.transform;
             gameObject.transform.localPosition = new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z);
+            gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
 
             i++;
         }

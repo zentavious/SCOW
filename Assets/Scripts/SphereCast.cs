@@ -43,7 +43,6 @@ public class SphereCast : MonoBehaviour
 
     public void Cast(InputAction.CallbackContext context)
     {
-        Debug.Log("trigger pressed");
         if (this.gameObject.GetComponent<SphereCollider>().enabled)
         {
             this.gameObject.GetComponent<SphereCollider>().enabled = false;

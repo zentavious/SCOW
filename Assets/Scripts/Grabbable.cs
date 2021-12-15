@@ -63,7 +63,7 @@ public class Grabbable : MonoBehaviour
             }
             else
             {
-
+                this.originalPosition = this.transform.position;
             }
         }
         else
