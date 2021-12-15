@@ -12656,6 +12656,7 @@ MonoBehaviour:
   laserPointer: {fileID: 0}
   controller: {fileID: 0}
   seeThrough: {fileID: 0}
+  hologram: {fileID: 0}
 --- !u!1 &1458523489
 GameObject:
   m_ObjectHideFlags: 0
@@ -15172,6 +15173,7 @@ MonoBehaviour:
   laserPointer: {fileID: 1944658404}
   controller: {fileID: 1944658405}
   seeThrough: {fileID: 2100000, guid: 172ebe1f35b60204a8d17bc307c506c2, type: 2}
+  hologram: {fileID: 142154732}
 --- !u!1 &2034364040
 GameObject:
   m_ObjectHideFlags: 0

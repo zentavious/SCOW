@@ -11,6 +11,7 @@ public class WIM : MonoBehaviour
     public LineRenderer laserPointer;
     public Grabber controller;
     public Material seeThrough;
+    public ParticleSystem hologram;
     private List<WIMMapping> mappings;
     private float smallestScaleModifier;
     private Vector3 lastPos;
@@ -18,6 +19,7 @@ public class WIM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.hologram.GetComponent<Renderer>().enabled = false;
         this.smallestScaleModifier = float.MaxValue;
         this.lastPos = this.transform.position;
         this.mappings = new List<WIMMapping>();
@@ -93,6 +95,7 @@ public class WIM : MonoBehaviour
             i++;
         }
         this.controller.SetEffectOn(true);
+        this.hologram.GetComponent<Renderer>().enabled = true;
     }
 
     public Grabbable UnCastWIM(Grabbable targetClone)
@@ -123,6 +126,7 @@ public class WIM : MonoBehaviour
             mapping.original.GetComponent<Grabbable>()?.Deselect();
         }
         this.mappings = new List<WIMMapping>();
+        this.hologram.GetComponent<Renderer>().enabled = false;
         return originalGrabbable;
     }
 
