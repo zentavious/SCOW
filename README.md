@@ -15,4 +15,4 @@ PULSAR BYTES. (v1.0 released on 04/12/2017). WorldSkies Free Skybox Pack. Purcha
 
 ## Getting Started
 
-Download SCOW_Final.apk in project folder. When in the scene, use the right hand trigger to select objects that are within the sphere. This will make a copy of the world objects on to your left hand for further inspection and exploration. Use the gripper to grab an object.
+Download SCOW_Final_Submission.apk in project folder. On startup and when in the scene, use the right hand trigger to select objects that are within the sphere. This will make a copy of the world objects on to your left hand for further inspection and exploration. Use the gripper to grab an object. Use the trigger to select an object. 
