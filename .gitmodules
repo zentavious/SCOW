@@ -1,0 +1,3 @@
+[submodule "Assets/IVLab-SkyVR"]
+	path = Assets/IVLab-SkyVR
+	url = https://github.umn.edu/ivlab-cs/SkyVR-UnityPackage
